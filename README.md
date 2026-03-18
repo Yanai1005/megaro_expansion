@@ -1,6 +1,7 @@
 ## BFインタープリタ
 
 ```bash
+pnpm install
 pnpm dev
 ```
 build/chrome-mv3-dev フォルダが生成
