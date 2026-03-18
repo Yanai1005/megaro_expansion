@@ -22,13 +22,16 @@ function writeUTF16LE(view: Uint8Array, base: number, s: string): number {
 }
 
 function readUTF16LE(view: Uint8Array, base: number, charCount: number): string {
-  let result = ""
+  // WASM side stores each BF output byte as a Unicode code point (0–255).
+  // Collect those bytes and decode them as UTF-8 so multi-byte sequences
+  // (e.g. Japanese characters compiled by bf_moon) render correctly.
+  const bytes = new Uint8Array(charCount)
   for (let i = 0; i < charCount; i++) {
     const lo = view[base + i * 2]
     const hi = view[base + i * 2 + 1]
-    result += String.fromCharCode(lo | (hi << 8))
+    bytes[i] = lo | (hi << 8)
   }
-  return result
+  return new TextDecoder("utf-8", { fatal: false }).decode(bytes)
 }
 
 function IndexPopup() {
